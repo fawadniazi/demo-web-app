@@ -13,8 +13,9 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const user = useUser();
+  const { data } = api.posts.getAll.useQuery();
 
   return (
     <>
@@ -29,6 +30,12 @@ const Home: NextPage = () => {
             {/* <h1> Sign in </h1> */}
             {!user.isSignedIn && <SignInButton />}
             {!!user.isSignedIn && <UserButton />}
+          </div>
+
+          <div>
+            {data?.map((post) => (
+              <div id={post.id}>{post.content}</div>
+            ))}
           </div>
 
           {/* <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
