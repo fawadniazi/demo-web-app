@@ -20,7 +20,7 @@ const CreatePostWizard = () => {
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.posts.getAll.invalidate(); // just to remove the error as this expect a promise
+      void ctx.posts.getAll.invalidate(); // just to remove the error as this expect a promise 23:7  Error: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator.  @typescript-eslint/no-floating-promises
     },
   });
 
