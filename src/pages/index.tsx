@@ -33,7 +33,7 @@ const CreatePostWizard = () => {
     },
   });
 
-  console.log(user);
+  // console.log(user);
   if (!user) return null;
 
   return (
