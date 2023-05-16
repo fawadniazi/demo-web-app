@@ -14,6 +14,10 @@ const filterUserForClient = (user: User) => {
     id: user.id,
     username: user.username!,
     profileImageUrl: user.profileImageUrl,
+    // externalUsername:
+    //   user.externalAccounts.find(
+    //     (externalAccount) => externalAccount.provider === "oauth_github"
+    //   )?.username || null,
   };
 };
 
@@ -35,10 +39,15 @@ const ratelimit = new Ratelimit({
 
 export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
+    //
+    //
     const posts = await ctx.prisma.post.findMany({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
     });
+
+    // console.log(posts);
+    //
 
     const users = (
       await clerkClient.users.getUserList({
@@ -47,18 +56,29 @@ export const postsRouter = createTRPCRouter({
       })
     ).map(filterUserForClient);
 
-    //.map -> filterUserForClient
-
-    //console.table(users);
+    // console.log("Users >> ", users);
 
     return posts.map((post) => {
+      // console.log(post.authorId);
       const author = users.find((user) => user.id === post.authorId); // Very important
+      // console.log("author >> ", author?.username, post.authorId);
 
-      if (!author || !author.username)
+      if (!author)
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Author for this post is not found",
+          message: `Author for this post is not found POST ID: ${post.id}, USER ID: ${post.authorId}`,
         });
+
+      // if (!author.username) {
+      //   // user the ExternalUsername
+      //   if (!author.externalUsername) {
+      //     throw new TRPCError({
+      //       code: "INTERNAL_SERVER_ERROR",
+      //       message: `Author has no GitHub Account: ${author.id}`,
+      //     });
+      //   }
+      //   author.username = author.externalUsername;
+      // }
 
       return {
         post,
