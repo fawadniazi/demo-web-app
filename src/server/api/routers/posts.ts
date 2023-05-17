@@ -1,5 +1,5 @@
-import { auth, clerkClient } from "@clerk/nextjs";
-import type { User } from "@clerk/nextjs/dist/api";
+import { clerkClient } from "@clerk/nextjs";
+// import type { User } from "@clerk/nextjs/dist/api";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
