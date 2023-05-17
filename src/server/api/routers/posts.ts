@@ -9,20 +9,9 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-const filterUserForClient = (user: User) => {
-  return {
-    id: user.id,
-    username: user.username!,
-    profileImageUrl: user.profileImageUrl,
-    // externalUsername:
-    //   user.externalAccounts.find(
-    //     (externalAccount) => externalAccount.provider === "oauth_github"
-    //   )?.username || null,
-  };
-};
-
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
+import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 // Create a new ratelimiter, that allows 3 requests per 1 min
 const ratelimit = new Ratelimit({
@@ -41,6 +30,7 @@ export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     //
     //
+
     const posts = await ctx.prisma.post.findMany({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
@@ -89,6 +79,7 @@ export const postsRouter = createTRPCRouter({
       };
     });
   }),
+
   create: privateProcedure
     .input(
       z.object({
@@ -108,5 +99,6 @@ export const postsRouter = createTRPCRouter({
           content: input.content,
         },
       });
+      return post;
     }),
 });
